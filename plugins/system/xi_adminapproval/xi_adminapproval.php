@@ -43,23 +43,20 @@ class plgSystemxi_adminapproval extends JPlugin
 		$adaptor = $this->getAdaptor($app->input);
 		
 		// 2. If activation request, then handle it
-		if($adaptor->isActivationRequest() === false){
+		if($adaptor->isActivationRequest()){
 			// check for activation, if eveything is fine
 			// block the user and ask admin to approve
 			$adaptor->doEmailVerificationAndBlocking();			
-			return;
 		}
 		
 		// 2. If activation resend request 
 		if($adaptor->isActivationResendRequest()){
 			$adaptor->doBlockActivationResendRequest();
-			return;
 		}
 
 		// 3. user / Admin is here to verification	
 		if($this->isAdminDoingApproval()){
 			$adaptor->doAdminApprovalAndInformUser();			
-			return;
 		}
 		
 		// Do nothing

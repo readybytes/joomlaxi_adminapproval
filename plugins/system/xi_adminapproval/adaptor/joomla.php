@@ -52,15 +52,21 @@ class XIAA_AdaptorJoomla
 	//user came to verify his email , check, mark and block user, inform admin	
 	public function doEmailVerificationAndBlocking()
 	{
-		$activationKey = $this->input->get('token',null,'alnum'); 
-		$user = JUser::getInstance($activationKey);
+		$activationKey  = $this->input->get('token',null,'alnum');
+		$user_id 		= $this->getUserId($activationKey);
+		
+		//invalid request, joomla will handle it
+		if(!$user_id){
+			return;
+		}
 		
 		// do we need approval
-		if($this->isApprovalRequired($user->id)==false){
+		if($this->isApprovalRequired($user_id)==false){
 			return;
 		}
 
 		// --- mark & block the user
+		$user = JUser::getInstance($user_id);
 		$user->setParam(self::PARAM_EMAIL_VERIFIED, '1');
 		$user->set('block', '1');
 			
@@ -85,23 +91,33 @@ class XIAA_AdaptorJoomla
 		$this->app-redirect('index.php', JText::_('PLG_XIAA_USER_EMAIL_VERIFIED_AND_ADMIN_WILL_APPROVE_YOUR_ACCOUNT'));
 	}
 	
+	function isAdminDoingApproval()
+	{
+		// find activation key, verify user is already verified
+		$activationKey  = $this->input->get('token',null,'alnum'); 
+		$user_id 		= $this->getUserId($activationKey);
+		$user 			= JUser::getInstance($user_id);
+		return intval($user->getParam(self::PARAM_EMAIL_VERIFIED));
+	}
+	
 	public function doAdminApprovalAndInformUser()
 	{
-		$activationKey = $this->input->get('token',null,'alnum'); 
-		$user = JUser::getInstance($activationKey);
-		
-		// activate user and enable
+		// find activation key, verify user is already verified
+		$activationKey  = $this->input->get('token',null,'alnum'); 
+		$user_id 		= $this->getUserId($activationKey);
+	
+		$user = JUser::getInstance($user_id);
 		$user->setParam(self::PARAM_ADMIN_APPROVED,'1');
 		$user->set('block', '0');
 		$user->set('activation','');
 		
 		if (!$user->save()){
 			$this->app->redirect('index.php',JText::_('PLG_XIAA_USER_SAVE_ERROR'));
+		}else{
+			// inform user
+			$this->sendMessage($user->id, self::MESSAGE_APPROVED);		
+			$this->app-redirect('index.php', JText::_('PLG_XIAA_USER_HAS_BEEN_APPROVED_BY_ADMIN'));
 		}
-
-		// inform user
-		$this->sendMessage($user->id, self::MESSAGE_APPROVED);		
-		$this->app-redirect('index.php', JText::_('PLG_XIAA_USER_HAS_BEEN_APPROVED_BY_ADMIN'));
 	}
 	
 	const MESSAGE_APPROVED = 1;
@@ -231,7 +247,7 @@ class XIAA_AdaptorJoomla
 
 
 	//	find user id from activation key
-	function getUser($activationKey) 
+	function getUserId($activationKey) 
 	{
 		$query = 'SELECT id  FROM #__users'
 				. ' WHERE '.$this->db->quoteName('activation').' = '.$this->db->Quote($activationKey)
