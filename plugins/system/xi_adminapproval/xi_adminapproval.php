@@ -41,18 +41,18 @@ class plgSystemxi_adminapproval extends JPlugin
 
 		// get adaptor
 		$adaptor = $this->getAdaptor($app->input);
-
-		// 1. If password resend request 
-		if($adaptor->isPasswordResendRequest()){
-			$adaptor->doBlockPasswordResendRequest();
-			return;
-		}
 		
 		// 2. If activation request, then handle it
 		if($adaptor->isActivationRequest() === false){
 			// check for activation, if eveything is fine
 			// block the user and ask admin to approve
 			$adaptor->doEmailVerificationAndBlocking();			
+			return;
+		}
+		
+		// 2. If activation resend request 
+		if($adaptor->isActivationResendRequest()){
+			$adaptor->doBlockActivationResendRequest();
 			return;
 		}
 
@@ -64,8 +64,5 @@ class plgSystemxi_adminapproval extends JPlugin
 		
 		// Do nothing
 		return;
-	}
-	
+	}	
 }
-
-

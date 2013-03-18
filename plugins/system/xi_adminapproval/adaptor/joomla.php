@@ -12,6 +12,8 @@ class XIAA_AdaptorJoomla
 {
 	public $name = 'Joomla';
 	
+	const PARAM_EMAIL_VERIFIED = 'email_verified';
+	const PARAM_ADMIN_APPROVED = 'admin_approved';
 	public function init()
 	{
 		// core joomla objects
@@ -23,142 +25,83 @@ class XIAA_AdaptorJoomla
 		$this->userconfig 	= JComponentHelper::getParams( 'com_users' );
 	}
 	
-	public function isApprovalRequired($args)
+	public function isApprovalRequired($user_id)
 	{
-		
+		return true;	
 	}
 	
 	// I am in frontend and user came to activate 
 	// index.php?option=com_users&task=registration.activate	
 	public function isActivationRequest()
 	{
-		$option	= $input->getCmd('option');
-		$task	= $input->getCmd('task');
+		$option	= $this->input->getCmd('option');
+		$task	= $this->input->getCmd('task');
 		return ($option == 'com_users' && $task =='registration.activate');
 	}
-	
-	public function isPasswordResendRequest()
-	{
-		$option	= $input->getCmd('option');
-		$task	= $input->getCmd('task');
-		return ($option =='com_users' && $task =='reset.request');
-	}
-	
-	
-	public function doBlockPasswordResendRequest($email=null)
-	{
-		//jimport('joomla.user.helper');
-		$query	= ' SELECT `id` FROM `#__users` '
-				. ' WHERE `email` = '.$this->db->quote($email);
-					
-		$id  = $this->db->setQuery($query)->loadResult();
-
-		// user exist & email is verified => block it
-		if($id && JUser::getInstance((int)$id)->getParam('email_verified')){						
-			// admins approval is pending, so no resets
-			// 	and tell user to wait for admin approval
-			$this->app->redirect('index.php', JText::_('PLG_MSG_WAIT_FOR_ADMIN_APPROVE_YOUR_ACCOUNT'));			
-		}
 		
-		// else do nothing, joomla will take care
-		return;
+	public function isActivationResendRequest()
+	{
+		return false;
 	}
 	
+	public function doBlockActivationResendRequest()
+	{
+		// there is no mechanism of resending activation
+	}
+		
 	//user came to verify his email , check, mark and block user, inform admin	
 	public function doEmailVerificationAndBlocking()
 	{
-/*		jimport('joomla.user.helper');
+		$activationKey = $this->input->get('token',null,'alnum'); 
+		$user = JUser::getInstance($activationKey);
+		
+		// do we need approval
+		if($this->isApprovalRequired($user->id)==false){
+			return;
+		}
 
-			// this plugin should also work without JS Profile Types
-			$MY_PATH_ADMIN_JSPT	  = JPATH_ADMINISTRATOR.DS.'components'.DS.'com_jsprofiletypes';
-			$this->jsptExist 	  = JFolder::exists($MY_PATH_ADMIN_JSPT);
+		// --- mark & block the user
+		$user->setParam(self::PARAM_EMAIL_VERIFIED, '1');
+		$user->set('block', '1');
+			
+		jimport('joomla.user.helper');
+		$newActivationKey=JUtility::getHash( JUserHelper::genRandomPassword());
+
+		// generate new activation 
+		// save new activation key by which our admin can enable user
+		$user->set('activation',$newActivationKey);
+		$this->activation =  $newActivationKey;
+			
+		if(!$user->save()){
+			// JError::raiseWarning('', JText::_( $user->getError()));
+			$this->app->redirect('index.php',JText::_('PLG_XIAA_USER_SAVE_ERROR'));
+		}
 					
-			if($this->jsptExist && $this->mode==3)
-			{				
-				require_once (JPATH_BASE. DS.'components'.DS.'com_community'.DS.'libraries'.DS.'profiletypes.php');
-				// some issue here
-				$pID = CProfiletypeLibrary::getUserProfiletypeFromUserID($this->activationUserID);
-				$profiletypeName = CProfiletypeLibrary::getProfileTypeNameFrom($pID);
-				// TODO : what to do for $pId =0 
-				
-				// if admin approval NOT required, then do nothing let the joomla handle
-				if($pID && CProfiletypeLibrary::getProfileTypeData($pID,'approve') == false)
-				{
-					if($this->debugMode)
-						$this->displayMessage('ProfileType='.$pID.' and approval not required');
-					return;
-				}
-			}
+		// send an email to admin  with a ativation link and profile of user.
+		$this->sendMessage($user_id, self::MESSAGE_APPROVAL);
 			
-			$MY_PATH_ADMIN_XIPT	  = JPATH_ADMINISTRATOR.DS.'components'.DS.'com_xipt';
-			$this->xiptExist 	  = JFolder::exists($MY_PATH_ADMIN_XIPT);
-			
-			if($this->xiptExist && $this->mode==3){
-				require_once (JPATH_BASE. DS.'components'.DS.'com_xipt'.DS.'api.xipt.php');
-				// some issue here 
-				$pID = XiptAPI::getUserProfiletype($this->activationUserID);
-				$profiletypeName = XiptAPI::getUserProfiletype($this->activationUserID,'name');
-				// TODO : what to do for $pId =0 
-				$allCondition = array();
-				$allCondition = XiptAPI::getProfiletypeInfo($pID);
-				// if admin approval NOT required, then do nothing let the joomla handle
-				if($allCondition){
-					if($pID &&  $allCondition[0]->approve == false){
-						if($this->debugMode)
-							$this->displayMessage('ProfileType='.$pID.' and approval not required');
-						return;
-					}
-				}		
-			}
-			
-			// --- mark
-			$user = JUser::getInstance($this->activationUserID);
-			$user->setParam('emailVerified','1');
-			
-			// --- also block the user
-			$user->set('block', '1');
-			
-			$newActivationKey=JUtility::getHash( JUserHelper::genRandomPassword());
-			// generate new activation 
-			// save new activation key by which our admin can enable user
-			$user->set('activation',$newActivationKey);
-			$this->activation =  $newActivationKey;
-			
-			if(!$user->save()){
-				JError::raiseWarning('', JText::_( $user->getError()));
-				$this->redirectUrl('index.php',JText::_('PLG_DEBUG_USER_SAVE_ERROR'));
-				exit();
-			}
-					
-			// send an email to admin  with a ativation link
-			// and profile of user.
-			$this->sendEmails('PLG_EMAIL_EMAIL_TO_ADMIN_FOR_APPROVAL');
-			
-			// show message to user
-			$this->displayMessage(JText::_('PLG_MSG_EMAIL_VERIFIED_AND_ADMIN_WILL_APPROVE_YOUR_ACCOUNT'));
-*/			
+		// show message to user
+		// XITODO : redirect to given menu page
+		$this->app-redirect('index.php', JText::_('PLG_XIAA_USER_EMAIL_VERIFIED_AND_ADMIN_WILL_APPROVE_YOUR_ACCOUNT'));
 	}
 	
 	public function doAdminApprovalAndInformUser()
 	{
-/*
-		// 6. is a admin, we should enable a blocked user				
-			$user = JUser::getInstance($this->activationUserID);
-			// activate user and enable
-			$user->setParam('emailVerified','0');
-			$user->set('block', '0');
-			$user->set('activation','');
-			if (!$user->save()){
-					JError::raiseWarning('', JText::_( $user->getError()));
-					$this->redirectUrl('index.php',JText::_('PLG_DEBUG_USER_SAVE_ERROR'));
-					exit();
-			}
-			// inform user
-			$this->sendEmails('PLG_EMAIL_ACCOUNT_ACTIVATION_EMAIL_TO_USER');
+		$activationKey = $this->input->get('token',null,'alnum'); 
+		$user = JUser::getInstance($activationKey);
+		
+		// activate user and enable
+		$user->setParam(self::PARAM_ADMIN_APPROVED,'1');
+		$user->set('block', '0');
+		$user->set('activation','');
+		
+		if (!$user->save()){
+			$this->app->redirect('index.php',JText::_('PLG_XIAA_USER_SAVE_ERROR'));
+		}
 
-			// show a message to admin
-			$this->displayMessage(JText::_('PLG_MSG_USER_HAS_BEEN_APPROVED_BY_ADMIN'));
-*/			
+		// inform user
+		$this->sendMessage($user->id, self::MESSAGE_APPROVED);		
+		$this->app-redirect('index.php', JText::_('PLG_XIAA_USER_HAS_BEEN_APPROVED_BY_ADMIN'));
 	}
 	
 	const MESSAGE_APPROVED = 1;
@@ -305,7 +248,7 @@ class XIAA_AdaptorJoomla
 	{
 		$id = $this->getUser($activationKey);	
 		$user = JUser::getInstance((int)$id);
-		return $user->getParam('email_verified');
+		return $user->getParam(self::PARAM_EMAIL_VERIFIED );
 	}
 	
 	

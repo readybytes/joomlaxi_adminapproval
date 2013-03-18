@@ -11,7 +11,7 @@
 require_once 'joomla.php';
 class XIAA_AdaptorJomSocial extends XIAA_AdaptorJoomla
 {
-	public $name = 'JomSocial';
+	public $name = 'Jomsocial';
 	
 	public function isApprovalRequired($args)
 	{
@@ -22,22 +22,43 @@ class XIAA_AdaptorJomSocial extends XIAA_AdaptorJoomla
 	// index.php?option=com_users&task=registration.activate	
 	public function isActivationRequest()
 	{
-		$option	= $input->getCmd('option');
-		$task	= $input->getCmd('task');
+		$option	= $this->input->getCmd('option');
+		$task	= $this->input->getCmd('task');
 		
 		$result = ($option == 'com_users' && $task =='registration.activate');
 		
 		return($result || parent::isActivationRequest($option, $task));
 	}
 	
-	public function isPasswordResendRequest()
+	public function isActivationResendRequest()
 	{
-		$option	= $input->getCmd('option');
-		$task	= $input->getCmd('task');
+		$option	= $this->input->getCmd('option');
+		$task	= $this->input->getCmd('task');
 		
 		$result = ($option =='com_community' && $task =='activationResend');
 		return($result || parent::isPasswordResendRequest());
 	}
+	
+	public function doBlockActivationResendRequest()
+	{
+		$email  =  $this->input->get('jsemail',null, 'STRING');
+
+		$query	= ' SELECT `id` FROM `#__users` '
+				. ' WHERE `email` = '.$this->db->quote($email);
+					
+		$id  = $this->db->setQuery($query)->loadResult();
+
+		// user exist & email is verified => block it
+		if($id && JUser::getInstance((int)$id)->getParam('email_verified')){						
+			// admins approval is pending, so no resets
+			// 	and tell user to wait for admin approval
+			$this->app->redirect('index.php', JText::_('PLG_MSG_WAIT_FOR_ADMIN_APPROVE_YOUR_ACCOUNT'));			
+		}
+		
+		// else do nothing, joomla will take care
+		return;
+	}
+	
 	
 	public function populateUserData($obj,$user_id)
 	{
