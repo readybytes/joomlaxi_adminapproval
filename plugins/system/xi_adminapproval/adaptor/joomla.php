@@ -11,9 +11,10 @@
 class XIAA_AdaptorJoomla
 {
 	public $name = 'Joomla';
-	
+
 	const PARAM_EMAIL_VERIFIED = 'email_verified';
 	const PARAM_ADMIN_APPROVED = 'admin_approved';
+	
 	public function init()
 	{
 		// core joomla objects
@@ -25,10 +26,16 @@ class XIAA_AdaptorJoomla
 		$this->userconfig 	= JComponentHelper::getParams( 'com_users' );
 	}
 	
-	public function isApprovalRequired($user_id)
+	public function isActivationResendRequest()
 	{
-		return true;	
+		return false;
 	}
+	
+	public function doBlockActivationResendRequest()
+	{
+		// there is no mechanism of resending activation
+	}
+	
 	
 	// I am in frontend and user came to activate 
 	// index.php?option=com_users&task=registration.activate	
@@ -39,14 +46,9 @@ class XIAA_AdaptorJoomla
 		return ($option == 'com_users' && $task =='registration.activate');
 	}
 		
-	public function isActivationResendRequest()
+	public function isApprovalRequired($user_id)
 	{
-		return false;
-	}
-	
-	public function doBlockActivationResendRequest()
-	{
-		// there is no mechanism of resending activation
+		return true;	
 	}
 		
 	//user came to verify his email , check, mark and block user, inform admin	
@@ -76,7 +78,7 @@ class XIAA_AdaptorJoomla
 		// generate new activation 
 		// save new activation key by which our admin can enable user
 		$user->set('activation',$newActivationKey);
-		$this->activation =  $newActivationKey;
+		//$this->activation =  $newActivationKey;
 			
 		if(!$user->save()){
 			// JError::raiseWarning('', JText::_( $user->getError()));
@@ -88,7 +90,7 @@ class XIAA_AdaptorJoomla
 			
 		// show message to user
 		// XITODO : redirect to given menu page
-		$this->app-redirect('index.php', JText::_('PLG_XIAA_USER_EMAIL_VERIFIED_AND_ADMIN_WILL_APPROVE_YOUR_ACCOUNT'));
+		$this->app->redirect('index.php', JText::_('PLG_XIAA_USER_EMAIL_VERIFIED_AND_ADMIN_WILL_APPROVE_YOUR_ACCOUNT'));
 	}
 	
 	function isAdminDoingApproval()
@@ -115,7 +117,7 @@ class XIAA_AdaptorJoomla
 			$this->app->redirect('index.php',JText::_('PLG_XIAA_USER_SAVE_ERROR'));
 		}else{
 			// inform user
-			$this->sendMessage($user->id, self::MESSAGE_APPROVED);		
+			$this->sendMessage($user_id, self::MESSAGE_APPROVED);		
 			$this->app-redirect('index.php', JText::_('PLG_XIAA_USER_HAS_BEEN_APPROVED_BY_ADMIN'));
 		}
 	}
@@ -205,7 +207,7 @@ class XIAA_AdaptorJoomla
 				
 				ob_start();
 					$vars = $obj;
-					include('..'.DS.'tmpl'.DS.'email_approval.php' );
+					include(dirname(__FILE__).DS.'tmpl'.DS.'email_approval.php' );
 				$data['subject'] = ob_get_contents();
 				ob_end_clean();
 				
@@ -216,7 +218,7 @@ class XIAA_AdaptorJoomla
 				
 				ob_start();
 					$vars = $obj;
-					include('..'.DS.'tmpl'.DS.'email_approved.php' );
+					include(dirname(__FILE__).DS.'tmpl'.DS.'email_approved.php' );
 				$data['subject'] = ob_get_contents();
 				ob_end_clean();
 				break;
@@ -240,9 +242,9 @@ class XIAA_AdaptorJoomla
 		$data['name']		= $user->name;
 		$data['email']		= $user->email;
 		$data['username']	= $user->username;
-		$data['link']		= JRoute::_('index.php?option=com_users&task=registration.activate&token='.$obj->activation, false);
+		$data['link']		= JRoute::_('index.php?option=com_users&task=registration.activate&token='.$data['activation'], false);
 
-		return $obj;
+		return $data;
 	}
 
 
@@ -282,7 +284,7 @@ class XIAA_AdaptorJoomla
 		}
 		
 		// enqueu Message : admin approval plugin cannot work without activation
-		if(! $config->get('userActivation')){
+		if(! $config->get('useractivation')){
 			$reurn = JText::_('PLG_XI_ADMINAPPROVAL_USER_ACTIVATION_REQUIRED');
 		}
 		

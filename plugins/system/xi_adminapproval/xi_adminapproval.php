@@ -27,7 +27,12 @@ class plgSystemxi_adminapproval extends JPlugin
 	public function getAdaptor($input)
 	{
 		$mode 	  = $this->params->get('mode', self::MODE_JOOMLA);
+		include 'adaptor'.DS.$mode.'.php';
+		$className = 'XIAA_Adaptor'.$mode;
+		$object = new $className();
+		$object->init();
 		
+		return $object;
 	}
 
 	function onAfterRoute()
@@ -44,20 +49,22 @@ class plgSystemxi_adminapproval extends JPlugin
 		
 		// 2. If activation request, then handle it
 		if($adaptor->isActivationRequest()){
+			
+			// Admin is here to verification ?	
+			if($adaptor->isAdminDoingApproval()){
+				$adaptor->doAdminApprovalAndInformUser();
+				return;		
+			}
+			
 			// check for activation, if eveything is fine
 			// block the user and ask admin to approve
-			$adaptor->doEmailVerificationAndBlocking();			
+			$adaptor->doEmailVerificationAndBlocking();		
 		}
 		
 		// 2. If activation resend request 
 		if($adaptor->isActivationResendRequest()){
 			$adaptor->doBlockActivationResendRequest();
-		}
-
-		// 3. user / Admin is here to verification	
-		if($this->isAdminDoingApproval()){
-			$adaptor->doAdminApprovalAndInformUser();			
-		}
+		}		
 		
 		// Do nothing
 		return;

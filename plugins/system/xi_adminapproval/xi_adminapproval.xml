@@ -1,7 +1,7 @@
-<?xml version="1.0"?>
-<install version="1.5" type="plugin" group="system">
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="2.5" type="plugin" group="system">
 	<name>Admin Approval</name>
-	<version>3.0.7</version>
+	<version>4.0</version>
 	<creationDate>October 2009</creationDate>
 	<author>Team JoomlaXi</author>
 	<authorEmail>shyam@joomlaxi.com</authorEmail>
@@ -14,37 +14,18 @@
 	</languages>	
 	<files>
 		<filename plugin="xi_adminapproval">xi_adminapproval.php</filename>
-		<filename plugin="xi_adminapproval">xi_adminapproval/tmpl/mail-to-admin.php</filename>
+		<folder>xi_adminapproval</folder>
 	</files>
-	
-	<!-- for J1.5 -->
-	<params>
-		<param name="debugMode" type="radio" default="0" label="Enable debugging" description="Enable/Disable debug mode">
-			<option value="1">Yes</option>
-			<option value="0">No</option>
-		</param>
-		<param name="Mode" type="list" default="1" label="Apply Approval to" description="If you have JomSocial and Multi Profile Type hack, then enable it.">
-			<option value="1">Joomla</option>
-			<option value="2">Joomla + JomSocial</option>
-			<option value="3">Joomla + JomSocial + JSPT</option>
-		</param>
-	</params>
-	
-	<!-- for J1.6++ -->
+		
 	<config>
 		<fields name="params">
 			<fieldset name="basic">
-				<field name="debugMode" type="radio" default="0" label="Enable debugging" description="Enable/Disable debug mode">
-					<option value="1">Yes</option>
-					<option value="0">No</option>
-				</field>
 				<field name="Mode" type="list" default="1" label="Apply Approval to" description="If you have JomSocial and Multi Profile Type hack, then enable it.">
-					<option value="1">Joomla</option>
-					<option value="2">Joomla + JomSocial</option>
-					<option value="3">Joomla + JomSocial + JSPT</option>
+					<option value="joomla">Joomla</option>
+					<option value="jomsocial">Joomla + JomSocial</option>
+					<option value="jspt">Joomla + JomSocial + JSPT</option>
 				</field>
 			</fieldset>
 		</fields>
 	</config>
-</install>
-
+</extension>
