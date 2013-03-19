@@ -81,7 +81,7 @@ class XIAA_AdaptorJomSocial extends XIAA_AdaptorJoomla
 				if($field['fieldcode']=='XIPT_PROFILETYPE'){
 					require_once (JPATH_BASE. DS.'components'.DS.'com_xipt'.DS.'api.xipt.php');
 					$profiletypeName = XiptAPI::getUserProfiletype($user_id,'name');
-					$obj[$name]= $profiletypeName;
+					$obj['profile'][$name]= $profiletypeName;
 					continue;	
 				}
 				
@@ -94,7 +94,7 @@ class XIAA_AdaptorJomSocial extends XIAA_AdaptorJoomla
 				$result  = $this->db->setQuery( $query )->loadresult();
 				
 				if(!empty($result)){
-					$obj[$name] =$result;
+					$obj['profile'][$name] =$result;
 				}
 			}
 		}

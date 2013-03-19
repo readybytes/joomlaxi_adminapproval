@@ -203,7 +203,7 @@ class XIAA_AdaptorJoomla
 		switch($type)
 		{
 			case self::MESSAGE_APPROVAL :
-				$data['subject'] = JText::_('PLG_XIAA_YOUR_ACCOUNT_APPROVED');
+				$data['subject'] = JText::sprintf('PLG_XIAA_YOUR_ACCOUNT_APPROVED',$obj['website']);
 				
 				ob_start();
 					$vars = $obj;
@@ -214,12 +214,12 @@ class XIAA_AdaptorJoomla
 				break;
 				
 			case self::MESSAGE_APPROVED :
-				$data['message'] = JText::_('PLG_XIAA_APPROVAL_REQUIRED_FOR_ACCOUNT');
+				$data['subject'] = JText::sprintf('PLG_XIAA_APPROVAL_REQUIRED_FOR_ACCOUNT',$obj['website']);
 				
 				ob_start();
 					$vars = $obj;
 					include(dirname(dirname(__FILE__)).DS.'tmpl'.DS.'email_approved.php' );
-				$data['subject'] = ob_get_contents();
+				$data['message'] = ob_get_contents();
 				ob_end_clean();
 				break;
 		}
@@ -239,10 +239,13 @@ class XIAA_AdaptorJoomla
 	{
 		// common infrmation
 		$user 			= JUser::getInstance((int)$user_id);
-		$data['name']		= $user->name;
-		$data['email']		= $user->email;
-		$data['username']	= $user->username;
-		$data['link']		= JURI::root().'index.php?option=com_users&task=registration.activate&token='.$user->activation;
+		$data['profile']['name']		= $user->name;
+		$data['profile']['email']		= $user->email;
+		$data['profile']['username']	= $user->username;
+		$data['link']	= JURI::root().'index.php?option=com_users&task=registration.activate&token='.$user->activation;
+		
+		$data['website'] = $config->get('sitename');
+		$data['website_url']= JURI::base();
 
 		return $data;
 	}

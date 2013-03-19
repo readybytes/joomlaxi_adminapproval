@@ -1,14 +1,16 @@
 <?php
 defined('_JEXEC') or die('Restricted access');
+?>
 
+Hello <?php echo $vars['profile']['name']?>,
 
+Congratulations,
 
+Your account have been approved, and you can now login to website.
+	Username : <?php echo $vars['profile']['username']?>
+	Email    : <?php echo $vars['profile']['email']?>
 
-echo sprintf(JText::_('PLG_EMAIL_EMAIL_TO_ADMIN_FOR_APPROVAL'),
-				$generaldetails['name'],$generaldetails['username'],
-				$generaldetails['email'],$generaldetails['actLink']);
-if($msg){
-	foreach($msg as $name => $value){	
-		echo $name ." : ". $value."\n";
-	}
-}								
+Thanks for joining us
+- <?php echo $vars['website']?>
+- <?php echo $vars['website_url']?>
+ 
