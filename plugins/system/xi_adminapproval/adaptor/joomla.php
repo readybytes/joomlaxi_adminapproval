@@ -207,18 +207,18 @@ class XIAA_AdaptorJoomla
 				
 				ob_start();
 					$vars = $obj;
-					include(dirname(__FILE__).DS.'tmpl'.DS.'email_approval.php' );
-				$data['subject'] = ob_get_contents();
+					include(dirname(dirname(__FILE__)).DS.'tmpl'.DS.'email_approval.php' );
+				$data['message'] = ob_get_contents();
 				ob_end_clean();
 				
 				break;
 				
 			case self::MESSAGE_APPROVED :
-				$data['subject'] = JText::_('PLG_XIAA_APPROVAL_REQUIRED_FOR_ACCOUNT');
+				$data['message'] = JText::_('PLG_XIAA_APPROVAL_REQUIRED_FOR_ACCOUNT');
 				
 				ob_start();
 					$vars = $obj;
-					include(dirname(__FILE__).DS.'tmpl'.DS.'email_approved.php' );
+					include(dirname(dirname(__FILE__)).DS.'tmpl'.DS.'email_approved.php' );
 				$data['subject'] = ob_get_contents();
 				ob_end_clean();
 				break;
@@ -242,7 +242,7 @@ class XIAA_AdaptorJoomla
 		$data['name']		= $user->name;
 		$data['email']		= $user->email;
 		$data['username']	= $user->username;
-		$data['link']		= JRoute::_('index.php?option=com_users&task=registration.activate&token='.$data['activation'], false);
+		$data['link']		= JURI::root().'index.php?option=com_users&task=registration.activate&token='.$user->activation;
 
 		return $data;
 	}
