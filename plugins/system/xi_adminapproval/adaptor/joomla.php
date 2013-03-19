@@ -118,7 +118,7 @@ class XIAA_AdaptorJoomla
 		}else{
 			// inform user
 			$this->sendMessage($user_id, self::MESSAGE_APPROVED);		
-			$this->app-redirect('index.php', JText::_('PLG_XIAA_USER_HAS_BEEN_APPROVED_BY_ADMIN'));
+			$this->app->redirect('index.php', JText::_('PLG_XIAA_USER_HAS_BEEN_APPROVED_BY_ADMIN'));
 		}
 	}
 	
@@ -198,7 +198,7 @@ class XIAA_AdaptorJoomla
 	{
 		$data = array();
 		$obj = array();
-		$this->populateUserData($obj, $user_id);
+		$obj = $this->populateUserData($obj, $user_id);
 		
 		switch($type)
 		{
@@ -244,7 +244,7 @@ class XIAA_AdaptorJoomla
 		$data['profile']['username']	= $user->username;
 		$data['link']	= JURI::root().'index.php?option=com_users&task=registration.activate&token='.$user->activation;
 		
-		$data['website'] = $config->get('sitename');
+		$data['website'] = JFactory::getConfig()->get('sitename');
 		$data['website_url']= JURI::base();
 
 		return $data;

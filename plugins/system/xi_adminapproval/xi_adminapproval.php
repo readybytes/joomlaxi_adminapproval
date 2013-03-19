@@ -19,6 +19,12 @@ class plgSystemxi_adminapproval extends JPlugin
 	const MODE_JOMSOCIAL	= 'jomsocial';
 	const MODE_JSPT			= 'jspt';
 	
+	function __construct(&$subject, $config)
+	{
+		parent::__construct($subject, $config);
+		$this->loadLanguage();
+	}
+	
 	/**
 	 * 
 	 * @param unknown_type $input
