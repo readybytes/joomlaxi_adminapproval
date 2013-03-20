@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="2.5" type="plugin" group="system">
+<extension version="2.5" type="plugin" group="system" method="upgrade">
 	<name>Admin Approval</name>
 	<version>4.0</version>
 	<creationDate>October 2009</creationDate>
@@ -9,12 +9,15 @@
 	<copyright>Team JoomlaXi</copyright>
 	<license>GNU/GPL</license>
 	<description> This extension allows Email verification by user as well as admin approval will be required for the user. It integrates with Joomla, Joomla + JomSocial and Joomla + JomSocial + JomSocial Multi Profile Type extensions.</description>
+	
 	<languages>
-		<language tag="en-GB">languages/en-GB.plg_xi_adminapproval.ini</language>
-	</languages>	
+		<language tag="en-GB">languages/en-GB.plg_system_xi_adminapproval.ini</language>
+	</languages>
+	
 	<files>
 		<filename plugin="xi_adminapproval">xi_adminapproval.php</filename>
-		<folder>xi_adminapproval</folder>
+		<folder>adaptor</folder>
+		<folder>tmpl</folder>
 	</files>
 		
 	<config>
