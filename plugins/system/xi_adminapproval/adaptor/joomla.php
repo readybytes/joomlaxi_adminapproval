@@ -10,17 +10,20 @@
 
 class XIAA_AdaptorJoomla
 {
-	public $name = 'Joomla';
-
+	public $name 	= 'Joomla';
+	public $params 	= null;
+	
 	const PARAM_EMAIL_VERIFIED = 'email_verified';
 	const PARAM_ADMIN_APPROVED = 'admin_approved';
 	
-	public function init()
+	public function init($param)
 	{
 		// core joomla objects
 		$this->app 			= JFactory::getApplication();
 		$this->db 			= JFactory::getDbo();	
 		$this->input 		= JFactory::getApplication()->input;
+		
+		$this->params = $param;
 		
 		// com_user configurations
 		$this->userconfig 	= JComponentHelper::getParams( 'com_users' );
@@ -127,7 +130,7 @@ class XIAA_AdaptorJoomla
 	
 	function sendMessage($user_id, $type=self::MESSAGE_APPROVAL)
 	{
-		//prepare basic vars
+		//prepare basic varsinit
 		$config = 	JFactory::getConfig();
 		
 		$site_name 			= $config->get('sitename');
@@ -151,7 +154,7 @@ class XIAA_AdaptorJoomla
 					foreach($admins as $admin)
 					{
 						$return = JFactory::getMailer()->sendMail(
-										$email_from, $email_fromname, $admin->email, 
+										$email_from, $email_fromname, $admin, 
 										$email_subject, $email_body
 									);
 	
@@ -185,12 +188,27 @@ class XIAA_AdaptorJoomla
 	
 	function _getAdminEmails()
 	{
-			// get all admin users
-			$query = 'SELECT name, email, sendEmail, id' .
-						' FROM #__users' .
-						' WHERE sendEmail=1';
+		$admins = array();
+				
+		$emails = $this->params->get('approval_email','');
+		$emails = explode(',', $emails);
+		
+		foreach ($emails as $email){
+			jimport('joomla.mail.helper');
+			$email = JString::trim($email);
+			if(JMailHelper::isEmailAddress($email)){
+				$admins[]=$email;
+			}
+		}
 
-			return $this->db->setQuery( $query )->loadObjectList();	
+		// user does not 
+		if(count($admins) <= 0){
+			// get all admin users
+			$query = 'SELECT email FROM #__users WHERE sendEmail=1';
+			$admins = $this->db->setQuery($query)->loadColumn();
+		}
+			
+		return $admins;	
 	}
 	
 	
@@ -203,7 +221,7 @@ class XIAA_AdaptorJoomla
 		switch($type)
 		{
 			case self::MESSAGE_APPROVAL :
-				$data['subject'] = JText::sprintf('PLG_XIAA_YOUR_ACCOUNT_APPROVED',$obj['website']);
+				$data['subject'] = JText::sprintf('PLG_XIAA_APPROVAL_REQUIRED_FOR_ACCOUNT',$obj['website']);
 				
 				ob_start();
 					$vars = $obj;
@@ -214,7 +232,7 @@ class XIAA_AdaptorJoomla
 				break;
 				
 			case self::MESSAGE_APPROVED :
-				$data['subject'] = JText::sprintf('PLG_XIAA_APPROVAL_REQUIRED_FOR_ACCOUNT',$obj['website']);
+				$data['subject'] = JText::sprintf('PLG_XIAA_YOUR_ACCOUNT_APPROVED',$obj['website']);
 				
 				ob_start();
 					$vars = $obj;

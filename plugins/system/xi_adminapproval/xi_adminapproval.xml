@@ -8,7 +8,7 @@
 	<authorUrl>http://www.joomlaxi.com</authorUrl>
 	<copyright>Team JoomlaXi</copyright>
 	<license>GNU/GPL</license>
-	<description> This extension allows Email verification by user as well as admin approval will be required for the user. It integrates with Joomla, Joomla + JomSocial and Joomla + JomSocial + JomSocial Multi Profile Type extensions.</description>
+	<description>This extension will enable Email Verification of newly registered users. After email verifications adminstrator approval will be required to activate the user account. It integrates with Joomla, Joomla + JomSocial and Joomla + JomSocial + JSPT extensions.</description>
 	
 	<languages>
 		<language tag="en-GB">languages/en-GB.plg_system_xi_adminapproval.ini</language>
@@ -23,10 +23,13 @@
 	<config>
 		<fields name="params">
 			<fieldset name="basic">
-				<field name="Mode" type="list" default="1" label="Apply Approval to" description="If you have JomSocial and Multi Profile Type hack, then enable it.">
+				<field name="mode" type="list" default="1" label="Apply Approval to" description="If you have JomSocial and Multi Profile Type hack, then enable it.">
 					<option value="joomla">Joomla</option>
 					<option value="jomsocial">Joomla + JomSocial</option>
 					<option value="jspt">Joomla + JomSocial + JSPT</option>
+				</field>
+				
+				<field name="approval_email" type="textarea" default="" label="Send approval email to " description="Add all email ID, where approval email will be sent. Multiple email can be added seperated by commas">
 				</field>
 			</fieldset>
 		</fields>

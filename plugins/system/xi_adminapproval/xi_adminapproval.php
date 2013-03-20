@@ -36,7 +36,7 @@ class plgSystemxi_adminapproval extends JPlugin
 		include 'adaptor'.DS.$mode.'.php';
 		$className = 'XIAA_Adaptor'.$mode;
 		$object = new $className();
-		$object->init();
+		$object->init($this->params);
 		
 		return $object;
 	}
@@ -47,7 +47,7 @@ class plgSystemxi_adminapproval extends JPlugin
 		
 		// 1. if backend then call showAdminDebugMessage and return
 		if($app->isAdmin()){
-			return;
+			//return;
 		}
 
 		// get adaptor
