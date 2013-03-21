@@ -5,32 +5,33 @@
 <target name="build" description="" depends="">
 
 		<!-- Delete TMP folder and recreate it -->
-		<delete dir="${basedir}" includeemptydirs="true" />
-		<mkdir dir="${basedir}/tmp" />
+		<delete dir="./tmp" includeemptydirs="true" />
+		<mkdir dir="./tmp" />
 		
 		
 		<!-- Copy files to tmp folder -->
-		<copy todir="${basedir}/tmp">
+		<copy todir="./tmp">
 			<fileset dir=".">
 			    <include name="xi_adminapproval.*" />
-			    <include name="adaptor" />
-			    <include name="tmpl" />
+			    <include name="adaptor/**/*.*" />
+			    <include name="tmpl/**/*.*" />
 		  	</fileset>
 		</copy>
 		
 		<!-- Copy langauge files -->
-		<mkdir dir="${basedir}/tmp/languages" />
-		<copy todir="${basedir}/tmp/languages">
+		<mkdir dir="./tmp/languages" />
+		<copy todir="./tmp/languages">
+			<mapper type="flatten" />
 			<fileset dir="../../../administrator/language/">
 			    <include name="*/*plg_system_xi_adminapproval.ini" />
 		  	</fileset>
 		</copy>
 		
 		<zip destfile="./plg_system_xi_adminapproval4.0.zip" 
-			basedir="${basedir}/tmp" />
+			basedir="./tmp" />
 			
 			
-		<delete dir="${basedir}" includeemptydirs="true" />
+		<delete dir="./tmp" includeemptydirs="true" />
 		
 </target>
 
