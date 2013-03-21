@@ -67,7 +67,7 @@ class XIAA_AdaptorJomSocial extends XIAA_AdaptorJoomla
 		$profile = $pModel->getEditableProfile($this->activationUserID);
 		$fields  = $profile['fields'];
 		
-		$obj->jomsocial = array();
+		//$obj->jomsocial = array();
 		
 		foreach($fields as $name => $fieldGroup){
 			foreach($fieldGroup as $field){

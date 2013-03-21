@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<project name="Package Builder" basedir="." default="build" description="Phing build script for packaging plugin.">
+
+
+<target name="build" description="" depends="">
+
+		<!-- Delete TMP folder and recreate it -->
+		<delete dir="${basedir}" includeemptydirs="true" />
+		<mkdir dir="${basedir}/tmp" />
+		
+		
+		<!-- Copy files to tmp folder -->
+		<copy todir="${basedir}/tmp">
+			<fileset dir=".">
+			    <include name="xi_adminapproval.*" />
+			    <include name="adaptor" />
+			    <include name="tmpl" />
+		  	</fileset>
+		</copy>
+		
+		<!-- Copy langauge files -->
+		<mkdir dir="${basedir}/tmp/languages" />
+		<copy todir="${basedir}/tmp/languages">
+			<fileset dir="../../../administrator/language/">
+			    <include name="*/*plg_system_xi_adminapproval.ini" />
+		  	</fileset>
+		</copy>
+		
+		<zip destfile="./plg_system_xi_adminapproval4.0.zip" 
+			basedir="${basedir}/tmp" />
+			
+			
+		<delete dir="${basedir}" includeemptydirs="true" />
+		
+</target>
+
+</project>	
