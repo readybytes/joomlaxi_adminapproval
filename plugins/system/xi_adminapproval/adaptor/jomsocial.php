@@ -12,20 +12,16 @@ require_once 'joomla.php';
 class XIAA_AdaptorJomSocial extends XIAA_AdaptorJoomla
 {
 	public $name = 'Jomsocial';
-	
-	public function isApprovalRequired($args)
-	{
 		
-	}
-	
 	// I am in frontend and user came to activate 
 	// index.php?option=com_users&task=registration.activate	
 	public function isActivationRequest()
 	{
 		$option	= $this->input->getCmd('option');
 		$task	= $this->input->getCmd('task');
+		$view	= $this->input->getCmd('view');
 		
-		$result = ($option == 'com_users' && $task =='registration.activate');
+		$result = ($option == 'com_community' && $task =='activate' && $view== 'register');
 		
 		return($result || parent::isActivationRequest($option, $task));
 	}
@@ -36,7 +32,7 @@ class XIAA_AdaptorJomSocial extends XIAA_AdaptorJoomla
 		$task	= $this->input->getCmd('task');
 		
 		$result = ($option =='com_community' && $task =='activationResend');
-		return($result || parent::isPasswordResendRequest());
+		return($result || parent::isActivationResendRequest());
 	}
 	
 	public function doBlockActivationResendRequest()
@@ -63,7 +59,7 @@ class XIAA_AdaptorJomSocial extends XIAA_AdaptorJoomla
 	public function populateUserData($obj,$user_id)
 	{
 		// joomla fills the info
-		parent::populateUserData($obj,$user_id);
+		$obj = parent::populateUserData($obj,$user_id);
 		
 		//populate jomsocial
 		require_once (JPATH_BASE. DS.'components'.DS.'com_community'.DS.'libraries'.DS.'core.php');
@@ -98,5 +94,7 @@ class XIAA_AdaptorJomSocial extends XIAA_AdaptorJoomla
 				}
 			}
 		}
+		
+		return $obj;
 	}
 }

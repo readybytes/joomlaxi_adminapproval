@@ -37,6 +37,7 @@ class XIAA_AdaptorJoomla
 	public function doBlockActivationResendRequest()
 	{
 		// there is no mechanism of resending activation
+		return false;
 	}
 	
 	

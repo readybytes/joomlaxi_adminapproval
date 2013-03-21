@@ -2,18 +2,18 @@
 defined('_JEXEC') or die('Restricted access');
 ?>
 
-Hello Admin,<br />
+Hello Admin,
 
-A new user have been registered at your site. <br />
+A new user have been registered at your site. 
 
-He/She needs your approval to activate His/her account.<br />
+He/She needs your approval to activate His/her account.
 
-His/her details are:<br />
-
+His/her details are:
 <?php foreach($vars['profile'] as $key => $val):?>
-	<?php echo "$key : $val"; ?> <br />
+	<?php echo "$key : $val"; ?> 
 <?php endforeach;?>
 
-You can approve user by clicking on Approval Link: <?php echo $vars['link']?> <br />
-(You are not required to login in website)<br />
+You can approve user by clicking on Approval Link: <?php echo $vars['link']?>
+
+(You are not required to login in website)
 <?php 

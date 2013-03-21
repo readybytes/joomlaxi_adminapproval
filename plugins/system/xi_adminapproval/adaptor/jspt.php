@@ -33,20 +33,4 @@ class XIAA_AdaptorJspt extends XIAA_AdaptorJomSocial
 		
 		return false;
 	}
-	
-	// I am in frontend and user came to activate 
-	// index.php?option=com_users&task=registration.activate	
-	public function isActivationRequest($option, $task)
-	{
-		$result = ($option == 'com_users' && $task =='registration.activate');
-		
-		return($result || parent::isActivationRequest($option, $task));
-	}
-	
-	public function isPasswordResendRequest($option, $task)
-	{
-		$result = ($option =='com_users' && $task =='reset.request');
-		
-		return($result || parent::isActivationRequest($option, $task));
-	}
 }

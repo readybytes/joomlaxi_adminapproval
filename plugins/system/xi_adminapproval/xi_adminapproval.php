@@ -47,7 +47,7 @@ class plgSystemxi_adminapproval extends JPlugin
 		
 		// 1. if backend then call showAdminDebugMessage and return
 		if($app->isAdmin()){
-			//return;
+			return;
 		}
 
 		// get adaptor
