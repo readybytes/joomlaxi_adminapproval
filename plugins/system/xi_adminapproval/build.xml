@@ -27,7 +27,7 @@
 		  	</fileset>
 		</copy>
 		
-		<zip destfile="./plg_system_xi_adminapproval4.0.zip" 
+		<zip destfile="./plg_system_xi_adminapproval3.0.zip" 
 			basedir="./tmp" />
 			
 			
