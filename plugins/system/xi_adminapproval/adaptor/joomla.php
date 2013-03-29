@@ -156,7 +156,7 @@ class XIAA_AdaptorJoomla
 					{
 						$return = JFactory::getMailer()->sendMail(
 										$email_from, $email_fromname, $admin, 
-										$email_subject, $email_body
+										$email_subject, $email_body, true
 									);
 	
 						// Check for an error.
@@ -173,7 +173,7 @@ class XIAA_AdaptorJoomla
 				$email	= JFactory::getUser($user_id)->email;
 				$return = JFactory::getMailer()->sendMail(
 										$email_from, $email_fromname, $email, 
-										$email_subject, $email_body
+										$email_subject, $email_body, true
 								);
 	
 				// Check for an error.
