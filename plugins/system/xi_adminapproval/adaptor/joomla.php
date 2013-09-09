@@ -77,7 +77,9 @@ class XIAA_AdaptorJoomla
 		$user->set('block', '1');
 			
 		jimport('joomla.user.helper');
-		$newActivationKey=JUtility::getHash( JUserHelper::genRandomPassword());
+		// Work for both Joomla 3 and Joomla 2.5 series 
+		$newActivationKey= (JVERSION >= '3.0') ? JApplication::getHash(JUserHelper::genRandomPassword()) : JUtility::getHash( JUserHelper::genRandomPassword());
+		//$newActivationKey=JUtility::getHash( JUserHelper::genRandomPassword());
 
 		// generate new activation 
 		// save new activation key by which our admin can enable user
