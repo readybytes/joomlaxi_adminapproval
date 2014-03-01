@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="2.5" type="plugin" group="system" method="upgrade">
 	<name>Admin Approval</name>
-	<version>3.2</version>
+	<version>3.3</version>
 	<creationDate>October 2009</creationDate>
 	<author>Team JoomlaXi</author>
 	<authorEmail>shyam@joomlaxi.com</authorEmail>
