@@ -22,6 +22,7 @@ class plgSystemxi_adminapproval extends JPlugin
 	const MODE_JOOMLA		= 'joomla';
 	const MODE_JOMSOCIAL	= 'jomsocial';
 	const MODE_JSPT			= 'jspt';
+	const MODE_PAYPLANS		= 'payplans';
 	
 	function __construct(&$subject, $config)
 	{

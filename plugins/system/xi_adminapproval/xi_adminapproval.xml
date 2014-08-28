@@ -27,6 +27,7 @@
 					<option value="joomla">Joomla</option>
 					<option value="jomsocial">Joomla + JomSocial</option>
 					<option value="jspt">Joomla + JomSocial + JSPT</option>
+					<option value="payplans">Joomla + JomSocial + JSPT + Payplans</option>
 				</field>
 				
 				<field name="approval_email" type="textarea" default="" label="Send approval email to " description="Add all email ID, where approval email will be sent. Multiple email can be added seperated by commas">

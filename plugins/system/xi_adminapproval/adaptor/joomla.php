@@ -58,7 +58,7 @@ class XIAA_AdaptorJoomla
 	//user came to verify his email , check, mark and block user, inform admin	
 	public function doEmailVerificationAndBlocking()
 	{
-		$activationKey  = $this->input->get('token',null,'alnum');
+		$activationKey  = $this->input->get('activation',null,'raw');
 		$user_id 		= $this->getUserId($activationKey);
 		
 		//invalid request, joomla will handle it
