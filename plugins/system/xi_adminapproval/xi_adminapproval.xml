@@ -8,7 +8,7 @@
 	<authorUrl>http://www.joomlaxi.com</authorUrl>
 	<copyright>Team JoomlaXi</copyright>
 	<license>GNU/GPL</license>
-	<description>This extension will enable Email Verification of newly registered users. After email verifications adminstrator approval will be required to activate the user account. It integrates with Joomla, Joomla + JomSocial and Joomla + JomSocial + JSPT extensions.</description>
+	<description>This extension will enable Email Verification of newly registered users. After email verifications adminstrator approval will be required to activate the user account. It integrates with Joomla, Joomla + JomSocial and Joomla + JomSocial + JSPT, Joomla + JomSocial + JSPT + PayPlans  extensions.</description>
 	
 	<languages>
 		<language tag="en-GB">languages/en-GB.plg_system_xi_adminapproval.ini</language>
