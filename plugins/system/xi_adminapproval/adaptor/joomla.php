@@ -59,6 +59,10 @@ class XIAA_AdaptorJoomla
 	public function doEmailVerificationAndBlocking()
 	{
 		$activationKey  = $this->input->get('activation',null,'raw');
+		if(is_null($activationKey))
+		{
+			$activationKey = $this->input->get('token',null,'raw');
+		}
 		$user_id 		= $this->getUserId($activationKey);
 		
 		//invalid request, joomla will handle it
