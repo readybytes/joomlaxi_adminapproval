@@ -20,8 +20,8 @@ class XIAA_AdaptorJomSocial extends XIAA_AdaptorJoomla
 		$option	= $this->input->getCmd('option');
 		$task	= $this->input->getCmd('task');
 		$view	= $this->input->getCmd('view');
-		
-		$result = ($option == 'com_community' && $task =='activate' && $view== 'register');
+
+		$result = ($option == 'com_community' && ($task =='activate' || $task =='registerSucess') && $view== 'register');
 		
 		return($result || parent::isActivationRequest($option, $task));
 	}
@@ -96,5 +96,19 @@ class XIAA_AdaptorJomSocial extends XIAA_AdaptorJoomla
 		}
 		
 		return $obj;
+	}
+	
+	public function isApprovalRequired($user_id)
+	{
+		$db = JFactory::getDbo();
+		
+		$query = "SELECT `approvals` FROM `#__community_profiles` WHERE `id` = (SELECT `profile_id` FROM `#__community_users` WHERE `userid`={$user_id})";
+		$db->setQuery($query);
+		$result = $db->loadResult();
+		if($result){
+			return true;
+		}
+		
+		return false;
 	}
 }

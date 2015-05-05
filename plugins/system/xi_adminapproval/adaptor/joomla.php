@@ -58,23 +58,33 @@ class XIAA_AdaptorJoomla
 	//user came to verify his email , check, mark and block user, inform admin	
 	public function doEmailVerificationAndBlocking()
 	{
-		$activationKey  = $this->input->get('activation',null,'raw');
-		if(is_null($activationKey))
+		$task	= $this->input->getCmd('task');
+		if($task == 'activate')
 		{
-			$activationKey = $this->input->get('token',null,'raw');
+			$activationKey  = $this->input->get('activation',null,'raw');
+			if(is_null($activationKey))
+			{
+				$activationKey = $this->input->get('token',null,'raw');
+			}
+			$user_id 		= $this->getUserId($activationKey);
+		}else{
+			// Code for temporary user id
+			$mySess  = JFactory::getSession();
+			$tmpUser = $mySess->get('tmpUser',0,'default');
+			$user_id = ($tmpUser!=0)?$tmpUser->id:0;
 		}
-		$user_id 		= $this->getUserId($activationKey);
 		
 		//invalid request, joomla will handle it
 		if(!$user_id){
 			return;
-		}
+		}		
 		
 		// do we need approval
-		if($this->isApprovalRequired($user_id)==false){
+		if($this->isApprovalRequired($pId)==false){
 			return;
 		}
-
+	
+		
 		// --- mark & block the user
 		$user = JUser::getInstance($user_id);
 		$user->setParam(self::PARAM_EMAIL_VERIFIED, '1');
