@@ -71,7 +71,7 @@ class XIAA_AdaptorJoomla
 			// Code for temporary user id
 			$mySess  = JFactory::getSession();
 			$tmpUser = $mySess->get('tmpUser',0,'default');
-			$user_id = ($tmpUser!=0)?$tmpUser->id:0;
+			$user_id = $tmpUser->id;
 		}
 		
 		//invalid request, joomla will handle it
@@ -80,7 +80,7 @@ class XIAA_AdaptorJoomla
 		}		
 		
 		// do we need approval
-		if($this->isApprovalRequired($pId)==false){
+		if($this->isApprovalRequired($user_id)==false){
 			return;
 		}
 	
